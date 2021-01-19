@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+# build the application binary
+echo "Building binary"
+./gradlew build
+
+# package it
+echo "Packaging binary and extensions"
+rm -rf package.zip
+zip -j package.zip build/libs/*.jar

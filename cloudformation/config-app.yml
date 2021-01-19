@@ -12,6 +12,9 @@ Resources:
       ApplicationName: 12factor-config
       Description: Demo application for configuration factor
 
+# Environments
+
+  # Dev
   TwelveFactorDevEnvironment:
     Type: AWS::ElasticBeanstalk::Environment
     Properties:
@@ -25,4 +28,38 @@ Resources:
         - Namespace: 'aws:autoscaling:launchconfiguration'
           OptionName: InstanceType
           Value: "t3.micro"
+      SolutionStackName: "64bit Amazon Linux 2 v3.1.4 running Corretto 8"
+  DevSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "Security group for Beanstalk to access ElastiCache"
+      GroupName: "12factor-config-dev-sg"
+      # default vpc
+  DevDb:
+    Type: AWS::ElastiCache::CacheCluster
+    Properties:
+      CacheNodeType: "cache.t3.micro"
+      ClusterName: "twelve-factor-config-dev-cluster"
+      Engine: "memcached"
+      NumCacheNodes: 1
+      VpcSecurityGroupIds:
+        - !GetAtt [DevSecurityGroup, GroupId]
+
+  # Prod
+  TwelveFactorProdEnvironment:
+    Type: AWS::ElasticBeanstalk::Environment
+    Properties:
+      ApplicationName: !Ref TwelveFactorApplication
+      Description: Production environment
+      EnvironmentName: 12factor-config-prod
+      OptionSettings:
+        - Namespace: 'aws:autoscaling:launchconfiguration'
+          OptionName: IamInstanceProfile
+          Value: !Ref InstanceProfile
+        - Namespace: 'aws:autoscaling:launchconfiguration'
+          OptionName: InstanceType
+          Value: "t3.small"
+        - Namespace: 'aws:autoscaling:asg'
+          OptionName: MinSize
+          Value: 2
       SolutionStackName: "64bit Amazon Linux 2 v3.1.4 running Corretto 8"

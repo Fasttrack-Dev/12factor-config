@@ -3,7 +3,7 @@
 stack_name="twelve-factor-config-stack"
 
 echo "Building $stack_name..."
-aws cloudformation update-stack \
+aws cloudformation deploy \
   --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND \
   --stack-name $stack_name \
-  --template-body file://config-app.yml
+  --template-file config-app.yml
