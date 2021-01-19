@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+bucketName="twelve-factor-app-service-staging"
+
 # build the application binary
 echo "Building binary"
 ./gradlew build
@@ -8,3 +10,7 @@ echo "Building binary"
 echo "Packaging binary and extensions"
 rm -rf package.zip
 zip -j package.zip build/libs/*.jar
+
+# stage it
+echo "Staging to $bucketName"
+aws s3 cp package.zip s3://$bucketName
