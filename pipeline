@@ -15,3 +15,7 @@ zip -j "$package_name" build/libs/*.jar
 # stage it
 echo "Staging to $bucket_name"
 aws s3 cp "$package_name" "s3://$bucket_name"
+
+# spin up / refresh environment
+cd cloudformation
+./build
