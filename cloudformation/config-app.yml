@@ -90,7 +90,7 @@ Resources:
           Value: "5000"
         - Namespace: "aws:elasticbeanstalk:application:environment"
           OptionName: "MEMCACHED_SERVER"
-          Value: !Join [ ":", [ !GetAtt [ DevDb, ConfigurationEndpoint.Address ], !GetAtt [ DevDb, ConfigurationEndpoint.Port ] ] ]
+          Value: !Join [ ":", [ !GetAtt [ ProdDb, ConfigurationEndpoint.Address ], !GetAtt [ ProdDb, ConfigurationEndpoint.Port ] ] ]
       SolutionStackName: "64bit Amazon Linux 2 v3.1.4 running Corretto 8"
       VersionLabel: !Ref ApplicationVersion
 
