@@ -1,3 +1,7 @@
+Parameters:
+  PackageName:
+    Type: String
+
 Resources:
 
   InstanceProfile:
@@ -19,7 +23,7 @@ Resources:
       Description: "Latest application version"
       SourceBundle:
         S3Bucket: twelve-factor-app-service-staging
-        S3Key: package.zip
+        S3Key: !Ref PackageName
 
   # Environments
 
@@ -42,7 +46,7 @@ Resources:
           OptionName: "SERVER_PORT"
           Value: "5000"
         - Namespace: "aws:elasticbeanstalk:application:environment"
-          OptionName: "DB_URL"
+          OptionName: "MEMCACHED_SERVER"
           Value: !Join [ ":", [ !GetAtt [ DevDb, ConfigurationEndpoint.Address ], !GetAtt [ DevDb, ConfigurationEndpoint.Port ] ] ]
       SolutionStackName: "64bit Amazon Linux 2 v3.1.4 running Corretto 8"
       VersionLabel: !Ref ApplicationVersion
@@ -81,4 +85,28 @@ Resources:
         - Namespace: 'aws:autoscaling:asg'
           OptionName: MinSize
           Value: 2
+        - Namespace: "aws:elasticbeanstalk:application:environment"
+          OptionName: "SERVER_PORT"
+          Value: "5000"
+        - Namespace: "aws:elasticbeanstalk:application:environment"
+          OptionName: "MEMCACHED_SERVER"
+          Value: !Join [ ":", [ !GetAtt [ DevDb, ConfigurationEndpoint.Address ], !GetAtt [ DevDb, ConfigurationEndpoint.Port ] ] ]
       SolutionStackName: "64bit Amazon Linux 2 v3.1.4 running Corretto 8"
+      VersionLabel: !Ref ApplicationVersion
+
+  ProdSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "Security group for Beanstalk to access ElastiCache"
+      GroupName: "12factor-config-prod-sg"
+      # default vpc
+
+  ProdDb:
+    Type: AWS::ElastiCache::CacheCluster
+    Properties:
+      CacheNodeType: "cache.t3.small"
+      ClusterName: "twelve-factor-config-prod-cluster"
+      Engine: "memcached"
+      NumCacheNodes: 2
+      VpcSecurityGroupIds:
+        - !GetAtt [ ProdSecurityGroup, GroupId ]

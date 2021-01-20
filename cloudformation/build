@@ -1,9 +1,15 @@
 #!/usr/bin/env bash
 
 stack_name="twelve-factor-config-stack"
+package_name="twelve-factor-config.zip"
 
 echo "Building $stack_name..."
 aws cloudformation deploy \
-  --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND \
+  --capabilities CAPABILITY_IAM \
   --stack-name $stack_name \
-  --template-file config-app.yml
+  --template-file config-app.yml \
+  --parameter-overrides \
+      PackageName="$package_name"
+
+./sg-setup 12factor-config-dev DevSecurityGroup
+./sg-setup 12factor-config-prod ProdSecurityGroup

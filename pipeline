@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-bucketName="twelve-factor-app-service-staging"
+bucket_name="twelve-factor-app-service-staging"
+package_name="twelve-factor-config.zip"
 
 # build the application binary
 echo "Building binary"
@@ -8,9 +9,9 @@ echo "Building binary"
 
 # package it
 echo "Packaging binary and extensions"
-rm -rf package.zip
-zip -j package.zip build/libs/*.jar
+rm -rf "$package_name"
+zip -j "$package_name" build/libs/*.jar
 
 # stage it
-echo "Staging to $bucketName"
-aws s3 cp package.zip s3://$bucketName
+echo "Staging to $bucket_name"
+aws s3 cp "$package_name" "s3://$bucket_name"

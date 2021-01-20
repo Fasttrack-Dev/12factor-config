@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+# Authorizes ingress traffic from EB to ElastiCache on port 11211
+
+echo "Authorizing access from $1 to $2"
+
+eb_sg_group_id=$(aws ec2 describe-security-groups \
+    --filters Name=tag:Name,Values="$1" \
+        Name=tag:aws:cloudformation:logical-id,Values=AWSEBSecurityGroup \
+    --query "SecurityGroups[*].[GroupId]" \
+    --output text)
+
+echo "Elastic Beanstalk security group id is $eb_sg_group_id"
+[ -z "$eb_sg_group_id" ] && exit 0
+
+ec_sg_group_id=$(aws ec2 describe-security-groups \
+    --filters Name=tag:aws:cloudformation:logical-id,Values="$2" \
+    --query "SecurityGroups[*].[GroupId]" \
+    --output text)
+
+echo "ElastiCache security group id is $ec_sg_group_id"
+[ -z "$ec_sg_group_id" ] && exit 0
+
+existing_authorization=$(aws ec2 describe-security-groups \
+  --filters Name=tag:aws:cloudformation:logical-id,Values="$2" \
+  --query "SecurityGroups[*].IpPermissions[*].UserIdGroupPairs[?GroupId=='$eb_sg_group_id'].GroupId" \
+  --output text)
+
+if [ "$existing_authorization" ]; then
+  echo "Ingress traffic is already authorized"
+  exit 0
+fi
+
+aws ec2 authorize-security-group-ingress \
+  --group-id "$ec_sg_group_id" \
+  --protocol tcp \
+  --port 11211 \
+  --source-group "$eb_sg_group_id"
+
+echo "Done."
