@@ -2,10 +2,8 @@
 
 stack_name="twelve-factor-config-stack"
 
-cd cloudformation
-
-./sg-cleanup DevSecurityGroup
-./sg-cleanup ProdSecurityGroup
+cloudformation/sg-cleanup DevSecurityGroup
+cloudformation/sg-cleanup ProdSecurityGroup
 
 echo "Deleting stack $stack_name..."
 aws cloudformation delete-stack --stack-name "$stack_name"

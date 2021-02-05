@@ -2,4 +2,4 @@
 package.zip
 .gradle
 build
-twelve-factor-config.zip
+*.zip

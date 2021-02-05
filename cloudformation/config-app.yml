@@ -1,6 +1,8 @@
 Parameters:
   PackageName:
     Type: String
+  BucketName:
+    Type: String
 
 Resources:
 
@@ -22,7 +24,7 @@ Resources:
       ApplicationName: !Ref TwelveFactorApplication
       Description: "Latest application version"
       SourceBundle:
-        S3Bucket: twelve-factor-app-service-staging
+        S3Bucket: !Ref BucketName
         S3Key: !Ref PackageName
 
   # Environments
