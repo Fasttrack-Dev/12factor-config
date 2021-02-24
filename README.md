@@ -45,10 +45,10 @@ GET http://<environment>/get?key=<key>
 ```
 examples for both actions:
 ```sh
-$ curl -X PUT 'http://12factor-config-prod.eba-6i4viwta.eu-west-1.elasticbeanstalk.com/set?key=huhu&value=ahhh'
+$ curl -X PUT 'http://12factor-config-prod.xxx.region.elasticbeanstalk.com/set?key=huhu&value=ahhh'
 ```
 ```sh
-$ curl -X GET 'http://12factor-config-prod.eba-6i4viwta.eu-west-1.elasticbeanstalk.com/get?key=huhu'
+$ curl -X GET 'http://12factor-config-prod.xxx.region.elasticbeanstalk.com/get?key=huhu'
 ```
 
 To remove the example, call the `teardown` script. It will remove the manual security
